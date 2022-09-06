@@ -75,6 +75,65 @@ const currencies = new Map([
 
 /////////////////////////////////////////////////
 
+
+
+
+/*
+
+// const euroToUsdn = 1.1;
+// const movementsUSD = movements.map(function (mov) {
+//   return mov * euroToUsdn;
+// });
+
+const movementsUSD = movements.map(mov => mov * euroToUsdn);
+console.log(movementsUSD);
+
+const movementsUSDfor = [];
+for (const mov of movements) movementsUSDfor.push(mov * euroToUsdn);
+console.log(movementsUSDfor);
+
+const movementsDescriptions = movements.map((mov, i) => {
+  `Movement ${i + 1} You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(
+    mov
+  )}`;
+});
+*/
+/*
+const dogsJulia = [3, 5, 2, 12, 7];
+const dogsKate = [4, 1, 15, 8, 3];
+const dogsJulia2 = [9, 16, 6, 8, 3];
+const dogsKate2 = [10, 5, 6, 1, 4];
+const dogsJuliaFix2 = dogsJulia2.slice(1, -2);
+const dogsJuliaFix = dogsJulia.slice(1, -2);
+
+const bothDogArr2 = [...dogsJulia2, ...dogsKate2];
+const bothDogArr = [...dogsJuliaFix, ...dogsKate];
+
+const adultOrPuppy = function (arr) {
+  for (const [i, age] of arr.entries()) {
+    console.log(
+      age >= 3
+        ? `Dog number ${i + 1} is an ADULT, and is ${age} years old`
+        : `Dog number ${i + 1} is still a PUPPY 🐶 `
+    );
+  }
+};
+adultOrPuppy(bothDogArr);
+console.log('----OTHER ONE----');
+adultOrPuppy(bothDogArr2);
+*/
+/*
+currencies.forEach(function (value, key, map) {
+  console.log(`${key}: ${value}`);
+});
+
+// Set
+const currenciesUnique = new Set(['USD', 'GBP', 'USD', 'EUR', 'EUR']);
+currenciesUnique.forEach(function (value, _, map) {
+  console.log(`${value}: ${value}`);
+});
+*/
+/*
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 for (const movement of movements) {
