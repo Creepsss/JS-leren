@@ -61,10 +61,12 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = '';
 
-  movements.forEach(function (mov, i) {
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
     const html = `
@@ -177,6 +179,42 @@ btnTransfer.addEventListener('click', function (e) {
   }
 });
 
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount / 10)) {
+    setTimeout(() => {
+      currentAccount.movements.push(amount);
+      updateUI(currentAccount);
+    }, 2000);
+  }
+  inputLoanAmount.value = '';
+});
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (
+    Number(inputClosePin.value) === currentAccount.pin &&
+    String(inputCloseUsername.value) === currentAccount.username
+  ) {
+    const index = accounts.findIndex(
+      acc => (acc.username = currentAccount.username)
+    );
+
+    accounts.splice(index, 1);
+    containerApp.style.opacity = 0;
+    console.log('Deleted');
+  }
+});
+
+let sorted = false;
+
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -191,6 +229,213 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 /////////////////////////////////////////////////
 
 /*
+const bankDepositSum = accounts
+  .flatMap(acc => acc.movements)
+  .filter(mov => mov > 0)
+  .reduce((sum, cur) => sum + cur, 0);
+
+console.log(bankDepositSum);
+
+// Exercise 2
+const numDeposits1000 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((count, cur) => (cur >= 1000 ? ++count : count), 0);
+
+console.log(numDeposits1000);
+
+// Prefixed ++ operator
+let a = 10;
+console.log(++a);
+console.log(a);
+
+// Exercise #3
+const { deposits, withdrawals } = accounts
+  .flatMap(acc => acc.movements)
+  .reduce(
+    (sums, cur) => {
+      // cur > 0 ? (sums.deposits += cur) : (sums.withdrawals += cur);
+      sums[cur > 0 ? 'deposits' : 'withdrawals'] += cur;
+      return sums;
+    },
+    { deposits: 0, withdrawals: 0 }
+  );
+console.log(deposits, withdrawals);
+
+// Exercise # 4
+const convertTitleCase = function (title) {
+  const expections = ['a', 'an', 'the', 'but', 'or', 'on', 'in', 'with'];
+
+  const titleCase = title
+    .toLowerCase()
+    .split(' ')
+    .map(word => word[0].toUpperCase() + word.slice(1));
+  return titleCase;
+};
+console.log(convertTitleCase('this is a nice title'));
+console.log(convertTitleCase('this is a LONG title but not to long'));
+console.log(convertTitleCase('and here is another title with an EXAMPLE'));
+*/
+/*
+// const juliaDog = [3, 5, 2, 12, 7];
+// const kateDog = [4, 1, 15, 8, 3];
+// const juliaDog2 = [9, 16, 6, 8, 3];
+// const kateDog2 = [10, 5, 6, 1, 4];
+// const allDogs = [];
+
+// const checkdogs = (arr, arr2) => {
+//   const fixDogs = arr.slice(1, -2);
+//   allDogs.push(...fixDogs, ...arr2);
+// };
+// checkdogs(juliaDog2, kateDog2);
+// console.log(allDogs);
+
+// for (const [key, value] of Object.entries(allDogs)) {
+//   if (value >= 5) {
+//     console.log(`Dog number:${key} is an adult, and is ${value} years old `);
+//   } else {
+//     console.log(`Dog number:${key} is still a puppy`);
+//   }
+// }
+
+// console.log('-----NEW CHALLENGE-----');
+
+// const ages = [5, 2, 4, 1, 15, 8, 3];
+// const ages2 = [16, 6, 10, 5, 6, 1, 4];
+
+// const calcAverageHumanAge = function (ages) {
+//   const humanAge = ages.map(age => (age <= 2 ? 2 * age : 16 + age * 4));
+//   console.log(humanAge);
+//   const adults = humanAge.filter(age => age >= 18);
+//   console.log(adults);
+//   const average = adults.reduce((acc, ages) => acc + ages, 0) / adults.length;
+//   console.log(average);
+// };
+// calcAverageHumanAge(ages);
+// calcAverageHumanAge(ages2);
+
+// const dogs = [
+//   { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+//   { weight: 8, curFood: 200, owners: ['Matilda'] },
+//   { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+//   { weight: 32, curFood: 340, owners: ['Michael'] },
+// ];
+
+// dogs.forEach(dog => (dog.recFood = Math.trunc(dog.weight ** 0.75 * 28)));
+// console.log(dogs);
+
+// const dogSarah = dogs.find(dog => dog.owners.includes('Sarah'));
+// console.log(dogSarah);
+// console.log(
+//   `Sarah's dog is eating to`,
+//   dogSarah.curFood > dogSarah.recFood ? `Much` : `Little`
+// );
+// const ownersEatTooMuch = dogs
+//   .filter(dog => dog.curFood > dog.recFood)
+//   .flatMap(dog => dog.owners);
+// console.log(ownersEatTooMuch);
+
+// const ownersEatTooLittle = dogs
+//   .filter(dog => dog.curFood < dog.recFood)
+//   .flatMap(dog => dog.owners);
+// console.log(ownersEatTooLittle);
+
+// console.log(dogs.some(dog => dog.curFood === dog.recFood));
+
+// const checkEatingOkay = dog =>
+//   dog.curFood > dog.recFood * 0.9 && dog.curFood < dog.recFood * 1.1;
+
+// console.log(dogs.some(checkEatingOkay));
+// console.log(dogs.filter(checkEatingOkay));
+
+// console.log(dogs.sort((a, b) => a.recFood - b.recFood));
+*/
+/*
+const dogs = [
+  { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+  { weight: 8, curFood: 200, owners: ['Matilda'] },
+  { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+  { weight: 32, curFood: 340, owners: ['Michael'] },
+];
+const dogOkay = [];
+
+dogs.forEach(dog => (dog.recFood = Math.trunc(dog.weight ** 0.75 * 28)));
+console.log(dogs);
+
+const dogSarah = dogs.find(dog => dog.owners.includes('Sarah'));
+console.log(dogSarah);
+console.log(
+  `Sarah's dog is eating too ${
+    dogSarah.curFood > dogSarah.recFood ? 'much' : 'little'
+  }`
+);
+
+const ownersToMuch = dogs
+  .filter(dog => dog.curFood > dog.recFood)
+  .flatMap(dog => dog.owners);
+console.log(ownersToMuch);
+
+const ownersToLitle = dogs
+  .filter(dog => dog.curFood < dog.recFood)
+  .flatMap(dog => dog.owners);
+console.log(ownersToLitle);
+
+console.log(`${ownersToMuch.join(' and ')} dogs eat to much!`);
+console.log(`${ownersToLitle.join(' and ')} dogs eat to little! `);
+
+console.log(dogs.some(dog => dog.curFood === dog.recFood));
+
+const checkEatingOkay = dog =>
+  dog.curFood > dog.recFood * 0.9 && dog.curFood < dog.recFood * 1.1;
+console.log(dogs.some(checkEatingOkay));
+console.log(dogs.filter(checkEatingOkay));
+
+const copyDogs = dogs.slice();
+console.log(copyDogs.sort((a, b) => a.recFood - b.recFood));
+*/
+/*
+labelBalance.addEventListener('click', function () {
+  const movementsUI = Array.from(
+    document.querySelectorAll('.movements__value'),
+    el => Number(el.textContent.replace('€', ''))
+  );
+
+  console.log(movementsUI);
+});
+*/
+/*
+const x = new Array(7);
+console.log(x);
+// console.log(x.map(() => 5))
+// arrys + fill method
+x.fill(7, 0, 7);
+console.log(x);
+
+//Array.from
+const y = Array.from({ length: 7 }, () => 1);
+console.log(y);
+
+const z = Array.from({ length: 7 }, (_, i) => i + 1);
+console.log(z);
+
+const diceRolls = Array.from({ length: 100 }, () =>
+  Math.trunc(Math.random() * 6)
+);
+console.log(diceRolls);
+*/
+/*
+const owners = ['Jonas', 'Zach', 'Adam', 'Martha'];
+console.log(owners.sort());
+console.log(owners);
+
+// return < 0 then a before b (keep order)
+// return > 0 then b before a (switch order)
+movements.sort((a, b) => {
+  if (a > b) return 1;
+  if (a < b) return -1;
+});
+console.log(movements);
+*/
+/*
 const firstWithdrawal = movements.find(mov => mov < 0);
 console.log(movements);
 console.log(firstWithdrawal);
@@ -199,7 +444,6 @@ console.log(accounts);
 
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 */
-
 /*
 // Challenge #4
 const calcAverageHumanAge = ages => {
